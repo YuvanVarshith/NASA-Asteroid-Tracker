@@ -1,5 +1,4 @@
 import requests
-import pprint
 from datetime import datetime
 import mysql.connector
 
