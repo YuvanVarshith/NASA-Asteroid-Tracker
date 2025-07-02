@@ -106,13 +106,16 @@ elif st.session_state.active_page == "queries":
             select a.name, max(ca.relative_velocity_kmph) as speed from asteroids a
             join close_approach ca on ca.neo_reference_id = a.id
             group by a.name
+            order by speed desc
             limit 10;
         """,
         "Find potentially hazardous asteroids that have approached Earth more than 3 times": """
-            select a.name, ca.relative_velocity_kmph as speed from asteroids a
-            join close_approach ca on ca.neo_reference_id = a.id
-            order by speed desc
-            limit 10;
+            select a.name, count(*) as approach_count from asteroids a
+            join close_approach ca on a.id = ca.neo_reference_id
+            where a.is_potentially_hazardous_asteroid = true
+            group by a.name
+            having count(*) > 3
+            order by approach_count desc;
         """,
         "Find the month with the most asteroid approaches": """
             select month(close_approach_date) as approach_month, count(*) as total_approaches from close_approach 
@@ -139,20 +142,19 @@ elif st.session_state.active_page == "queries":
             join close_approach ca on ca.neo_reference_id = a.id
             where orbiting_body = 'Earth' and relative_velocity_kmph > 50000;
         """,
-        "Count how many approaches happened per month":"""
-            select month(close_approach_date),count(*) from close_approach
-            group by month(close_approach_date)
-            order by month(close_approach_date)
+        "Count how many approaches happened per day":"""
+            select day(close_approach_date),count(*) from close_approach
+            group by day(close_approach_date)
+            order by day(close_approach_date)
         """,
-        "An asteroid whose closest approach is getting nearer over time(Hint: Use ORDER BY close_approach_date and look at miss_distance)":"""
+        "An asteroid whose closest approach is getting nearer over time":"""
             select a.name, ca.close_approach_date, ca.miss_distance_km from asteroids a
             join close_approach ca on ca.neo_reference_id = a.id
             order by a.name, ca.close_approach_date;
         """,
-        "--Find asteroid with the highest brightness (lowest magnitude value)--":"""
-            select a.name, ca.close_approach_date, ca.miss_distance_km from asteroids a
-            join close_approach ca on ca.neo_reference_id = a.id
-            order by a.name, ca.close_approach_date;
+        "Find asteroid with the highest brightness (lower magnitude value)":"""
+            select name, absolute_magnitude_h as lower_magnitude_value from asteroids 
+            order by absolute_magnitude_h asc limit 1;
         """,
         "Get number of hazardous vs non-hazardous asteroids":"""
             select is_potentially_hazardous_asteroid, count(*) as total from asteroids
@@ -176,10 +178,11 @@ elif st.session_state.active_page == "queries":
         "find the total number of unique asteroids":"""
             select count(distinct id) as unique_asteroid_count from asteroids;
         """,
-        "find the top 5 most hazardous asteroids (by size)":"""
-            select name, estimated_diameter_max_km from asteroids 
-            where is_potentially_hazardous_asteroid = true 
-            order by estimated_diameter_max_km desc limit 5;
+        "Which asteroid has had the most close approaches to Earth":"""
+            select a.name,  count(*) as approach_count  from  asteroids a 
+            join close_approach ca  on  a.id = ca.neo_reference_id
+            group by a.name
+            order by approach_count desc limit 1;
         """,
         "find the earliest recorded close approach":"""
             select a.name, ca.close_approach_date from asteroids a 
@@ -192,7 +195,7 @@ elif st.session_state.active_page == "queries":
             group by a.name 
             having count(*) > 1 
             order by approach_count desc;
-         """
+         """    
     }
 
     selected_query = st.selectbox("Select your query", ["Choose an option"] + list(query_options.keys()))

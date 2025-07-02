@@ -16,7 +16,7 @@ while len(asteriodes_data) < target:
   data = response.json()
   details = data['near_earth_objects']
   for date, asteriodes in details.items():
-    for ast in asteriodes:
+    for ast in asteriodes: 
       asteriodes_data.append(dict(id=int(ast['id']),
                                  neo_reference_id=ast['neo_reference_id'],
                                  name=ast['name'],
