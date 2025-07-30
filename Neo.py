@@ -43,10 +43,10 @@ connection = mysql.connector.connect(host='gateway01.ap-southeast-1.prod.aws.tid
                                port = 4000)
 
 cursor = connection.cursor()
-cursor.execute("create database dummy")
+cursor.execute("create database nasa_asteroids")
 
 #selecting database
-cursor.execute("USE dummy")
+cursor.execute("USE nasa_asteroids")
 
 #Creating Asteroids table
 cursor.execute("""CREATE TABLE asteroids(id INT, name VARCHAR(200), absolute_magnitude_h FLOAT, estimated_diameter_min_km FLOAT, estimated_diameter_max_km FLOAT, is_potentially_hazardous_asteroid BOOLEAN)""")

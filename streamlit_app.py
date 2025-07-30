@@ -7,7 +7,7 @@ from datetime import date
 conn = mysql.connector.connect(host='gateway01.ap-southeast-1.prod.aws.tidbcloud.com',
                                user='3AgaX31voqjKoCg.root',
                                password='B0VUhselpkYfTPPK',
-                               database="dummy",
+                               database="nasa_asteroids",
                                port = 4000)
 
 #query to fetch data
